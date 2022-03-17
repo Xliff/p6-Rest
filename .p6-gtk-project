@@ -1,0 +1,8 @@
+prefix=Rest
+modules=
+lib=rest
+call_prefix=rest_
+include-directory=/usr/src/librest-0.8.1/rest
+backups=backup,bitbucket,google-backup,azure-backup,hut
+build_exclude=
+struct-prefix=Rest
