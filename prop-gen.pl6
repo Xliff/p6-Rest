@@ -74,18 +74,17 @@ my %methods;
 
 sub genSub ($mn, $rw, $gtype, $dep, $vtype-r, $vtype-w) {
   my %c;
+  my $i = ' ' x 6;
 
   with $rw {
     %c<read> =
       "\t  \$gv = GLib::Value.new(" ~
-      "\n\t" ~ "self.prop_get('{ $mn }', \$gv)\n" ~
-      ' ' x 6 ~ ");\n" ~
+      "\n\t" ~ "self.prop_get('{ $mn }', \$gv)\n" ~ $i ~ ");\n" ~
       $vtype-r
     if $rw.any.contains('read');
 
     %c<write> =
-      "{ $vtype-w }\n" ~
-      ' ' x 6 ~ "self.prop_set(\'{ $mn }\', \$gv);"
+      "{ $vtype-w }\n" ~ $i ~ "self.prop_set(\'{ $mn }\', \$gv);"
     if $rw.any.contains('write');
 
     %c<write> = "warn '{ $mn } is a construct-only attribute'"
@@ -98,7 +97,7 @@ sub genSub ($mn, $rw, $gtype, $dep, $vtype-r, $vtype-w) {
   # Read warnings should appear behind a DEBUG sentinel.
   %c<read>  //= qq:to/READ/;
 warn '{ $mn } does not allow reading' if \$DEBUG;
-{ $gtype eq 'G_TYPE_STRING' ?? "''" !! ' ' x 6 ~ '0' };
+{ $i }{ $gtype eq 'G_TYPE_STRING' ?? "''" !!  ~ '0' };
 READ
 
   my $deprecated = '';
@@ -209,7 +208,10 @@ sub generateFromFile ($type-prefix, $control is copy, $var) {
   my token type-name { <{ $type-prefix }> \w+ }
 
   my $search = $contents ~~ /
-    'G_TYPE_CHECK_INSTANCE_CAST' .+? <t=type-name> ')' ')'?$$
+    [
+      'G_TYPE_CHECK_INSTANCE_CAST' .+? <t=type-name> ')' ')'?$$ |
+      'G_DEFINE_TYPE' \s* '(' <t=type-name> ','
+    ]
   /;
 
   my $control-type = $/<t>.Str if $/<t>;

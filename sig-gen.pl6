@@ -86,7 +86,6 @@ sub MAIN (
     # 1) Read in the .c file for the signal names
     my @signals;
     my $contents = $control-io.slurp;
-    $contents.say;
     my $matches = $contents ~~ m:g/
       'g_signal_new' \s* '('\s* '"' (<[\-\_\w]>+) '"' \s* ',' \s*
       [
