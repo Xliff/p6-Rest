@@ -1,19 +1,22 @@
 use v6.c;
 
 use Method::Also;
+use NativeCall;
 
 use Rest::Raw::Types;
 use Rest::Raw::Proxy;
 
-use GLib::Raw::Object;
-
 use Rest::Proxy::Call;
+
+use GLib::Roles::Object;
+use Rest::Roles::Signals::Proxy;
 
 our subset RestProxyAncestry is export of Mu
   where RestProxy | GObject;
 
 class Rest::Proxy {
   also does GLib::Roles::Object;
+  also does Rest::Roles::Signals::Proxy;
 
   has RestProxy $!rp is implementor;
 
@@ -41,7 +44,14 @@ class Rest::Proxy {
   method Rest::Raw::Definitions::RestProxy
   { $!rp }
 
-  method new (Str() $url_format, Int() $binding_required) {
+  multi method new (RestProxyAncestry $rest-proxy, :$ref = True) {
+    return Nil unless $rest-proxy;
+
+    my $o = self.bless( :$rest-proxy );
+    $o.ref if $ref;
+    $o;
+  }
+  multi method new (Str() $url_format, Int() $binding_required) {
     my gboolean $b = $binding_required.so.Int;
 
     my $rest-proxy = rest_proxy_new($url_format, $b);
@@ -188,6 +198,12 @@ class Rest::Proxy {
     );
   }
 
+  # Is originally:
+  # RestProxy *proxy,  RestProxyAuth *auth,  gboolean retrying --> gboolean
+  method authenticate {
+    self.connect-authenticate($!rp);
+  }
+
   method add_soup_feature (SoupSessionFeature() $feature)
     is also<add-soup-feature>
   {
@@ -209,7 +225,13 @@ class Rest::Proxy {
   }
 
   # Alias to new_call.
-  method make_call ( :$raw = False ) is also<make-call> {
+  method make_call ( :$raw = False )
+    is also<
+      make-call
+      new_call
+      new-call
+    >
+  {
     propReturnObject(
       rest_proxy_new_call($!rp),
       $raw,
@@ -227,44 +249,29 @@ class Rest::Proxy {
 
   multi method simple_run (
                              @payload,
+                             %params,
     CArray[Pointer[GError]]  $error = gerror,
-                            :@params         where *.elems > 1
   ) {
     samewith(
       ArrayToCArray(Str, @payload),
-      @payload.elems,
       $error,
-      |@params
-    );
-  }
-  multi method simple_run (
-    @payload,
-    @params
-  ) {
-    samewith(
-      ArrayToCArray(Str, @payload)
-      gerror,
-      |@params
-    );
-  }
-  multi method simple_run (
-    @payload,
-    *@params
-  ) {
-    samewith(
-      ArrayToCArray(Str, @payload)
-      gerror,
-      |@params
+      |%params
     );
   }
   multi method simple_run (
     CArray[Str]             $payload,
-    Int()                   $len,
-    CArray[Pointer[GError]] $error,
-    *@params,
+    CArray[Pointer[GError]] $error    = gerror,
+    *%params,
   ) {
-    my goffset $l = $len;
+    my $call = Rest::Proxy::Call.new($!rp);
+    for %params.pairs {
+      $call.add_param( .key, .value );
+    }
+    my $ret     = $call.sync;
+    my $len     = $ret ?? $call.get_payload_length !! 0;
+       $payload = $ret ?? $call.get_payload        !! Nil;
 
-    so rest_proxy_simple_run_helper($!rp, $payload, $len, $error, @params);
+    ($payload, $len);
   }
+
 }
