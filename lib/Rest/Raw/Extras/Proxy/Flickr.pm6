@@ -10,31 +10,31 @@ use Rest::Raw::Definitions;
 
 sub flickr_proxy_build_login_url (FlickrProxy $proxy, Str $frob, Str $perms)
   returns Str
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_get_api_key (FlickrProxy $proxy)
   returns Str
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_get_shared_secret (FlickrProxy $proxy)
   returns Str
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_get_token (FlickrProxy $proxy)
   returns Str
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_get_type ()
   returns GType
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
@@ -43,19 +43,19 @@ sub flickr_proxy_is_successful (
   CArray[Pointer[GError]] $error
 )
   returns uint32
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_new (Str $api_key, Str $shared_secret)
   returns RestProxy
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_new_upload (FlickrProxy $proxy)
   returns FlickrProxyCall
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
@@ -65,23 +65,23 @@ sub flickr_proxy_new_upload_for_file (
   CArray[Pointer[GError]] $error
 )
   returns FlickrProxyCall
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_new_with_token (Str $api_key, Str $shared_secret, Str $token)
   returns FlickrProxy
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_set_token (FlickrProxy $proxy, Str $token)
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub flickr_proxy_sign (FlickrProxy $proxy, GHashTable $params)
   returns Str
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }

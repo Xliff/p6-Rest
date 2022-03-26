@@ -148,24 +148,24 @@ class Rest::Extras::Proxy::Youtube is Rest::Proxy {
 
 sub youtube_proxy_get_type ()
   returns GType
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub youtube_proxy_new (Str $developer_key)
   returns YoutubeProxy
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub youtube_proxy_new_with_auth (Str $developer_key, Str $user_auth)
   returns RestProxy
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
 sub youtube_proxy_set_user_auth (YoutubeProxy $proxy, Str $user_auth)
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
 
@@ -180,6 +180,6 @@ sub youtube_proxy_upload_async (
   CArray[Pointer[GError]] $error
 )
   returns uint32
-  is native(rest)
+  is native(rest-extras)
   is export
 { * }
