@@ -51,7 +51,7 @@ class Rest::Proxy {
     $o.ref if $ref;
     $o;
   }
-  multi method new (Str() $url_format, Int() $binding_required) {
+  multi method new (Str() $url_format, Int() $binding_required = False) {
     my gboolean $b = $binding_required.so.Int;
 
     my $rest-proxy = rest_proxy_new($url_format, $b);
