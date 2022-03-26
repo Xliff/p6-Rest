@@ -17,7 +17,8 @@ class Rest::XML::Node {
     $!rxn = $rest-xml-node
   }
 
-  method Rest::Raw::Structs::RestXmlNode
+  method Rest::Raw::Definitions::RestXmlNode
+    is also<RestXmlNode>
   { $!rxn }
 
   method Array {
