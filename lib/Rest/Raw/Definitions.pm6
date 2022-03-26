@@ -21,6 +21,7 @@ class RestParams        is repr<CPointer> is export does GLib::Roles::Pointers {
 
 class FlickrProxy       is repr<CPointer> is export does GLib::Roles::Pointers { }
 class LastfmProxy       is repr<CPointer> is export does GLib::Roles::Pointers { }
+class YoutubeProxy      is repr<CPointer> is export does GLib::Roles::Pointers { }
 
 class FlickrProxyCall   is repr<CPointer> is export does GLib::Roles::Pointers { }
 
